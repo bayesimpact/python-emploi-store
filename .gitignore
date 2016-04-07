@@ -1,0 +1,6 @@
+# Vim temp files.
+.*.swp
+
+# Python temp files.
+*.pyc
+__pycache__
