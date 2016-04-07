@@ -3,7 +3,7 @@ Pôle Emploi, the French unemployment agency, to share their public data.
 
 This is a Python client library for their API. 
 
-The library is in `emploi_store.py` and works both in Python 2 and Python 3.
+The library is in `emploi_store` and works both in Python 2 and Python 3.
 Usage information and required environment variables is documented in the
 library's docstring.
 
@@ -16,6 +16,7 @@ need to get a client ID and client secret from Emploi Store Dev.
 
 As documented on their
 [website](https://www.emploi-store-dev.fr/portail-developpeur/donneesdoctechnique) you need to:
+
 * [Sign-in](https://www.emploi-store-dev.fr/portail-developpeur/donneesdoctechnique:connexion) or [create a new account](https://www.emploi-store-dev.fr/portail-developpeur/creationutilisateur)
 * Go to your [dashboard](https://www.emploi-store-dev.fr/portail-developpeur/tableaudebord)
 * Add an application, check `Oui` to the question `Utilisation de l’API Pôle
