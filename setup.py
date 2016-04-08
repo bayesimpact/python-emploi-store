@@ -2,7 +2,7 @@
 """Python client library for Pôle Emploi's "Emploi Store Dev"."""
 from distutils import core
 
-__version__ = '0.1'
+__version__ = '0.1.1'
 
 core.setup(
     name='python-emploi-store',
