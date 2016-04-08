@@ -1,10 +1,10 @@
 # encoding: utf-8
 """Python client library for Pôle Emploi's "Emploi Store Dev"."""
-from distutils import core
+import setuptools
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
-core.setup(
+setuptools.setup(
     name='python-emploi-store',
     packages=['emploi_store'],
     version=__version__,
@@ -15,5 +15,6 @@ core.setup(
     download_url='https://github.com/bayesimpact/python-emploi-store/tarball/' + __version__,
     license='The MIT License (MIT)',
     keywords=['Pôle Emploi', 'France', 'emploi', 'OpenData'],
+    install_requires=['requests'],
     classifiers=[],
 )
