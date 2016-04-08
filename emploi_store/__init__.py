@@ -89,7 +89,7 @@ class Client(object):
     def api_get(self, action, **params):
         """Retrieve JSON information from the API."""
         req = requests.get(
-            self.api_url + action, params,
+            self.api_url + action, params=params,
             headers={'Authorization': 'Bearer %s' % self.access_token()})
         if req.status_code != 200:
             raise EnvironmentError(
@@ -183,9 +183,10 @@ class Resource(object):
         self._id = kwargs.pop('id')
 
     def _records_batch(self, offset=0, batch_size=200, filters=None):
+        filters_json = json.dumps(filters) if filters else None
         res = self._client.api_get(
             '/datastore_search', limit=batch_size, offset=offset, id=self._id,
-            filters=json.dumps(filters))
+            filters=filters_json)
         return res.get('records')
 
     def records(self, batch_size=200, filters=None):

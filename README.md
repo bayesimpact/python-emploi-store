@@ -7,7 +7,10 @@ The library is in `emploi_store` and works both in Python 2 and Python 3.
 Usage information and required environment variables is documented in the
 library's docstring.
 
-An example on how to use it is in `example.py`.
+Examples on how to use it is are in:
+
+* `example.py` for a server using multiple calls to the API.
+* `csv_example.py` for a simpele download of a CSV from the API.
 
 ## API Key
 
