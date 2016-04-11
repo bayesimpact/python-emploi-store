@@ -36,8 +36,6 @@ import os
 
 import requests
 
-# TODO: Add tests.
-
 
 class Client(object):
     """Client of the Emploi Store API.
