@@ -1,4 +1,6 @@
+# encoding: utf-8
 """Unit tests for emploi_store module."""
+import codecs
 import datetime
 import tempfile
 import shutil
@@ -106,14 +108,7 @@ class ResourceTest(unittest.TestCase):
 
     def test_to_csv(self, mock_requests):
         """Test the to_csv method."""
-        mock_requests.post.return_value = mock.MagicMock()
-        mock_requests.post.return_value.status_code = 200
-        mock_requests.post.return_value.json.return_value = {
-            "access_token": "foobar",
-        }
-        mock_requests.get.return_value = mock.MagicMock()
-        mock_requests.get.return_value.status_code = 200
-        mock_requests.get.return_value.json.return_value = {
+        _setup_mock_requests(mock_requests, {
             'success': True,
             'result': {
                 'records': [
@@ -121,16 +116,52 @@ class ResourceTest(unittest.TestCase):
                     {'CODE': '456', 'NAME': 'Second'},
                 ],
             },
-        }
+        })
         filename = self.tmpdir + '/bmo_2016.csv'
 
         self.res.to_csv(filename)
 
-        csv_content = open(filename).read().replace('\r\n', '\n')
+        with open(filename) as csv_file:
+            csv_content = csv_file.read().replace('\r\n', '\n')
         self.assertEqual("""CODE,NAME
 123,First
 456,Second
 """, csv_content)
+
+    def test_to_csv_utf8(self, mock_requests):
+        """Test the to_csv method when resource has the BOM bug."""
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'records': [
+                    {u'CÖDE': '123', 'NAME': u'Fïrst'},
+                    {u'CÖDE': '456', 'NAME': u'Ségond'},
+                ],
+            },
+        })
+        filename = self.tmpdir + '/bmo_2016.csv'
+
+        self.res.to_csv(filename)
+
+        with codecs.open(filename, 'r', 'utf-8') as csv_file:
+            csv_content = csv_file.read().replace('\r\n', '\n')
+        self.assertEqual(u"""CÖDE,NAME
+123,Fïrst
+456,Ségond
+""", csv_content)
+
+
+def _setup_mock_requests(
+        mock_requests, get_json, post_json=None):
+    if post_json is None:
+        post_json = {'access_token': 'foobar'}
+    mock_requests.post.return_value = mock.MagicMock()
+    mock_requests.post.return_value.status_code = 200
+    mock_requests.post.return_value.json.return_value = post_json
+
+    mock_requests.get.return_value = mock.MagicMock()
+    mock_requests.get.return_value.status_code = 200
+    mock_requests.get.return_value.json.return_value = get_json
 
 
 

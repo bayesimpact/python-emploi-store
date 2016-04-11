@@ -33,6 +33,7 @@ import datetime
 import itertools
 import json
 import os
+import sys
 
 import requests
 
@@ -205,13 +206,20 @@ class Resource(object):
         sort them alphabetically.
         """
         records = self.records(batch_size=batch_size)
+        need_utf8_encode = sys.version_info < (3, 0)
         if not fieldnames:
             first = next(records)
             records = itertools.chain([first], records)  # pylint: disable=redefined-variable-type
             fieldnames = sorted(set(first.keys()) - set(['_id']))
+        if need_utf8_encode:
+            fieldnames = [f.encode('utf-8') for f in fieldnames]
         with open(file_name, 'wt') as csvfile:
             csv_writer = csv.DictWriter(
                 csvfile, fieldnames, extrasaction='ignore')
             csv_writer.writeheader()
             for record in records:
+                if need_utf8_encode:
+                    record = {
+                        k.encode('utf-8'):v.encode('utf-8')
+                        for k, v in record.items()}
                 csv_writer.writerow(record)
