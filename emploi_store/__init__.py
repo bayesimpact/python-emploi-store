@@ -37,6 +37,9 @@ import sys
 
 import requests
 
+# Byte Order Mark. https://en.wikipedia.org/wiki/Byte_order_mark
+_BOM = u'\ufeff'
+
 
 class Client(object):
     """Client of the Emploi Store API.
@@ -210,7 +213,8 @@ class Resource(object):
         if not fieldnames:
             first = next(records)
             records = itertools.chain([first], records)  # pylint: disable=redefined-variable-type
-            fieldnames = sorted(set(first.keys()) - set(['_id']))
+            keys = set(_strip_bom(k) for k in first.keys())
+            fieldnames = sorted(keys - set(['_id']))
         if need_utf8_encode:
             fieldnames = [f.encode('utf-8') for f in fieldnames]
         with open(file_name, 'wt') as csvfile:
@@ -218,8 +222,15 @@ class Resource(object):
                 csvfile, fieldnames, extrasaction='ignore')
             csv_writer.writeheader()
             for record in records:
+                record = {_strip_bom(k):v for k, v in record.items()}
                 if need_utf8_encode:
                     record = {
                         k.encode('utf-8'):v.encode('utf-8')
                         for k, v in record.items()}
                 csv_writer.writerow(record)
+
+
+def _strip_bom(field):
+    if field.startswith(_BOM):
+        return field[len(_BOM):]
+    return field

@@ -150,6 +150,28 @@ class ResourceTest(unittest.TestCase):
 456,Ségond
 """, csv_content)
 
+    def test_to_csv_utf8_with_bom(self, mock_requests):
+        """Test the to_csv method when resource has the BOM bug."""
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'records': [
+                    {u'\ufeffCÖDE': '123', 'NAME': u'Fïrst'},
+                    {u'\ufeffCÖDE': '456', 'NAME': u'Ségond'},
+                ],
+            },
+        })
+        filename = self.tmpdir + '/bmo_2016.csv'
+
+        self.res.to_csv(filename)
+
+        with codecs.open(filename, 'r', 'utf-8') as csv_file:
+            csv_content = csv_file.read().replace('\r\n', '\n')
+        self.assertEqual(u"""CÖDE,NAME
+123,Fïrst
+456,Ségond
+""", csv_content)
+
 
 def _setup_mock_requests(
         mock_requests, get_json, post_json=None):
