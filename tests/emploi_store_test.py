@@ -186,6 +186,5 @@ def _setup_mock_requests(
     mock_requests.get.return_value.json.return_value = get_json
 
 
-
 if __name__ == '__main__':
     unittest.main()
