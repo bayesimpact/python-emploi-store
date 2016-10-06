@@ -184,18 +184,20 @@ class Resource(object):
         self.name = name
         self._id = kwargs.pop('id')
 
-    def _records_batch(self, offset=0, batch_size=200, filters=None):
+    def _records_batch(
+            self, offset=0, batch_size=200, filters=None, fields=None):
         filters_json = json.dumps(filters) if filters else None
+        fields_list = ','.join(fields) if fields else None
         res = self._client.api_get(
             '/datastore_search', limit=batch_size, offset=offset, id=self._id,
-            filters=filters_json)
+            filters=filters_json, fields=fields_list)
         return res.get('records')
 
-    def records(self, batch_size=200, filters=None):
+    def records(self, batch_size=200, filters=None, fields=None):
         """Get all records from resource."""
         offset = 0
         while True:
-            batch = self._records_batch(offset, batch_size, filters)
+            batch = self._records_batch(offset, batch_size, filters, fields)
             for record in batch:
                 yield record
             if len(batch) != batch_size:
@@ -222,10 +224,10 @@ class Resource(object):
                 csvfile, fieldnames, extrasaction='ignore')
             csv_writer.writeheader()
             for record in records:
-                record = {_strip_bom(k):v for k, v in record.items()}
+                record = {_strip_bom(k): v for k, v in record.items()}
                 if need_utf8_encode:
                     record = {
-                        k.encode('utf-8'):v.encode('utf-8')
+                        k.encode('utf-8'): v.encode('utf-8')
                         for k, v in record.items()}
                 csv_writer.writerow(record)
 
