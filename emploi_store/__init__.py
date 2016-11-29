@@ -204,13 +204,13 @@ class Resource(object):
                 return
             offset += batch_size
 
-    def to_csv(self, file_name, fieldnames=None, batch_size=200):
+    def to_csv(self, file_name, fieldnames=None, batch_size=200, filters=None):
         """Write all records to a CSV file.
 
         If fieldnames isn't set, it will get them from the first record and
         sort them alphabetically.
         """
-        records = self.records(batch_size=batch_size)
+        records = self.records(batch_size=batch_size, filters=filters)
         need_utf8_encode = sys.version_info < (3, 0)
         if not fieldnames:
             first = next(records)
