@@ -48,7 +48,7 @@ class Client(object):
     retrieve data.
     """
 
-    api_url = 'https://api.emploi-store.fr/api/action'
+    api_url = 'https://api.emploi-store.fr/api'
 
     def __init__(self, client_id=None, client_secret=None):
         if not client_id:
@@ -91,7 +91,7 @@ class Client(object):
     def api_get(self, action, **params):
         """Retrieve JSON information from the API."""
         req = requests.get(
-            self.api_url + action, params=params,
+            self.api_url + '/action' + action, params=params,
             headers={'Authorization': 'Bearer %s' % self.access_token()})
         if req.status_code != 200:
             raise EnvironmentError(
@@ -126,6 +126,47 @@ class Client(object):
             package_id = self._get_package_id(name)
         package_json = self.api_get('/package_show', id=package_id)
         return Package(self, **package_json)
+
+    def get_lbb_companies(
+            self, latitude, longitude, distance=10,
+            rome_codes=None, naf_codes=None):
+        """Get a list of hiring companies from La Bonne Boite API.
+
+        Args:
+            latitude: the latitude of the point near which to search for
+                companies.
+            longitude: the longitude of the point near which to search for
+                companies.
+            distance: the maximum distance (in km) to search for companies.
+            rome_codes: a list of ROME IDs defining job groups in which
+                companies should hire.
+            naf_codes: a list of NAF codes defining the activity sector of the
+                companies.
+        Yields:
+            a dict per company, see
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/files/live/sites/emploi-store-dev/files/documents/doc-technique-labonneboite-v1.1.pdf
+            for details of the fields.
+        """
+        params = {
+            'latitude': latitude,
+            'longitude': longitude,
+            'distance': distance,
+        }
+        if rome_codes:
+            params['rome_codes'] = ','.join(rome_codes)
+        if naf_codes:
+            params['naf_codes'] = ','.join(naf_codes)
+        req = requests.get(
+            self.api_url + '/lbb/v1/company/', params=params,
+            headers={'Authorization': 'Bearer %s' % self.access_token()})
+        if req.status_code != 200:
+            raise EnvironmentError(
+                'HTTP error %d for: \n%s' % (req.status_code, req.url))
+        response = req.json()
+        companies = response.get('companies')
+        if companies:
+            for company in companies:
+                yield company
 
 
 class Package(object):

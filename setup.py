@@ -2,7 +2,7 @@
 """Python client library for Pôle Emploi's "Emploi Store Dev"."""
 import setuptools
 
-__version__ = '0.1.4'
+__version__ = '0.2.0'
 
 setuptools.setup(
     name='python-emploi-store',
