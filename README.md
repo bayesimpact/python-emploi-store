@@ -12,6 +12,24 @@ Examples on how to use it is are in:
 * `example.py` for a server using multiple calls to the API.
 * `csv_example.py` for a simpele download of a CSV from the API.
 
+## Installation
+
+The library is released on
+[PyPi](https://pypi.python.org/pypi/python-emploi-store) thus can be installed
+with pip:
+
+```sh
+pip install python-emploi-store
+```
+
+That's all, then you just need to use:
+
+```py
+import emploi_store
+```
+
+in your code.
+
 ## API Key
 
 This client library doesn't provide direct access to the data. To use it, you
