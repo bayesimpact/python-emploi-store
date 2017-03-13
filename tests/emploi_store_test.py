@@ -166,6 +166,29 @@ class ResourceTest(unittest.TestCase):
 456,Second
 """, csv_content)
 
+    def test_to_csv_with_id(self, mock_requests):
+        """Test the to_csv method making sure the '_id' field is not written out
+        and does not throw error with missing 'encode' method on type 'int'."""
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'records': [
+                    {'_id': 1, 'CODE': 123, 'NAME': 'First'},
+                    {'_id': 2, 'CODE': 456, 'NAME': 'Second'},
+                ],
+            },
+        })
+        filename = self.tmpdir + '/bmo_2016.csv'
+
+        self.res.to_csv(filename)
+
+        with open(filename) as csv_file:
+            csv_content = csv_file.read().replace('\r\n', '\n')
+        self.assertEqual("""CODE,NAME
+123,First
+456,Second
+""", csv_content)
+
     def test_to_csv_utf8(self, mock_requests):
         """Test the to_csv method when resource has Unicode chars."""
         _setup_mock_requests(mock_requests, {
