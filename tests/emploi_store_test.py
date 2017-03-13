@@ -166,6 +166,28 @@ class ResourceTest(unittest.TestCase):
 456,Second
 """, csv_content)
 
+    def test_to_csv_number(self, mock_requests):
+        """Test the to_csv method when resource returns numbers directly."""
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'records': [
+                    {'CODE': 123, 'NAME': 'First'},
+                    {'CODE': 456, 'NAME': 'Second'},
+                ],
+            },
+        })
+        filename = self.tmpdir + '/bmo_2016.csv'
+
+        self.res.to_csv(filename)
+
+        with open(filename) as csv_file:
+            csv_content = csv_file.read().replace('\r\n', '\n')
+        self.assertEqual("""CODE,NAME
+123,First
+456,Second
+""", csv_content)
+
     def test_to_csv_utf8(self, mock_requests):
         """Test the to_csv method when resource has Unicode chars."""
         _setup_mock_requests(mock_requests, {
