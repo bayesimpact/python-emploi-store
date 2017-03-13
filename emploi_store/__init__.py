@@ -28,6 +28,7 @@ bmo_2014 = bmo_package.get_resource(name='Résultats enquête BMO 2014')
 bmo_2014.to_csv('data/bmo_2014.csv')
 ```
 """
+import collections
 import csv
 import datetime
 import itertools
@@ -39,6 +40,9 @@ import requests
 
 # Byte Order Mark. https://en.wikipedia.org/wiki/Byte_order_mark
 _BOM = u'\ufeff'
+
+
+_Token = collections.namedtuple('AccessToken', ['expired_at', 'value'])
 
 
 class Client(object):
@@ -61,38 +65,41 @@ class Client(object):
                 raise ValueError('Client needs a client secret')
         self._client_id = client_id
         self._client_secret = client_secret
-        self._access_token = None
-        self._token_expired = datetime.datetime.now()
+        self._access_tokens = {}
         self._cached_packages = None
 
-    def access_token(self, valid_for=datetime.timedelta(seconds=5)):
+    def access_token(self, scope, valid_for=datetime.timedelta(seconds=5)):
         """Return an access token valid for the next 5 seconds."""
-        if self._access_token:
+        if scope in self._access_tokens:
+            token = self._access_tokens[scope]
             next_request_time = datetime.datetime.now() + valid_for
-            if next_request_time < self._token_expired:
-                return self._access_token
+            if next_request_time < token.expired_at:
+                return token.value
 
         auth_request = requests.post(
             'https://www.emploi-store-dev.fr/identite/oauth2/access_token',
             data={
-                'realm': 'developpeur',
+                'realm': 'partenaire',
                 'grant_type': 'client_credentials',
                 'client_id': self._client_id,
                 'client_secret': self._client_secret,
+                'scope': 'application_%s %s' % (self._client_id, scope),
             })
         if auth_request.status_code != 200:
             raise ValueError('Client ID or secret invalid')
         response = auth_request.json()
-        self._access_token = response.get('access_token')
+        token = response.get('access_token')
         expires_in = datetime.timedelta(seconds=response.get('expires_in', 600))
-        self._token_expired = datetime.datetime.now() + expires_in
-        return self._access_token
+        self._access_tokens[scope] = _Token(
+            value=token, expired_at=datetime.datetime.now() + expires_in)
+        return token
 
     def api_get(self, action, **params):
         """Retrieve JSON information from the API."""
+        scope = 'api_infotravailv1'
         req = requests.get(
             self.api_url + '/action' + action, params=params,
-            headers={'Authorization': 'Bearer %s' % self.access_token()})
+            headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
         if req.status_code != 200:
             raise EnvironmentError(
                 'HTTP error %d for: \n%s' % (req.status_code, req.url))
@@ -156,9 +163,10 @@ class Client(object):
             params['rome_codes'] = ','.join(rome_codes)
         if naf_codes:
             params['naf_codes'] = ','.join(naf_codes)
+        scope = 'api_labonneboitev1'
         req = requests.get(
             self.api_url + '/lbb/v1/company/', params=params,
-            headers={'Authorization': 'Bearer %s' % self.access_token()})
+            headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
         if req.status_code != 200:
             raise EnvironmentError(
                 'HTTP error %d for: \n%s' % (req.status_code, req.url))

@@ -28,7 +28,7 @@ class ClientTestCase(unittest.TestCase):
             "access_token": "foobar",
         }
 
-        token = self.client.access_token()
+        token = self.client.access_token(scope='my-scope')
 
         self.assertEqual(1, mock_requests.post.call_count)
         self.assertEqual(
@@ -37,6 +37,9 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(
             'my-Secret',
             mock_requests.post.call_args[1]['data']['client_secret'])
+        self.assertEqual(
+            'application_my-ID my-scope',
+            mock_requests.post.call_args[1]['data']['scope'])
         self.assertEqual('foobar', token)
 
     @mock.patch(emploi_store.__name__ + '.datetime')
@@ -52,13 +55,13 @@ class ClientTestCase(unittest.TestCase):
         mock_datetime.datetime.now.return_value = now
         mock_datetime.timedelta = datetime.timedelta
 
-        self.client.access_token()
+        self.client.access_token('my-scope')
 
         mock_requests.post.reset_mock()
         now += datetime.timedelta(seconds=40)
         mock_datetime.datetime.now.return_value = now
 
-        token = self.client.access_token()
+        token = self.client.access_token('my-scope')
 
         self.assertEqual('foobar', token)
         self.assertFalse(mock_requests.post.called)
@@ -76,7 +79,7 @@ class ClientTestCase(unittest.TestCase):
         mock_datetime.datetime.now.return_value = now
         mock_datetime.timedelta = datetime.timedelta
 
-        self.client.access_token()
+        self.client.access_token('my-scope')
 
         mock_requests.post.reset_mock()
         now += datetime.timedelta(seconds=40)
@@ -85,7 +88,7 @@ class ClientTestCase(unittest.TestCase):
             "access_token": "second token",
         }
 
-        token = self.client.access_token()
+        token = self.client.access_token('my-scope')
 
         self.assertEqual('second token', token)
         self.assertTrue(mock_requests.post.called)
