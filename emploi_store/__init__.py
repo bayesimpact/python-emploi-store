@@ -268,7 +268,7 @@ class Resource(object):
                 record = {_strip_bom(k): v for k, v in record.items()}
                 if need_utf8_encode:
                     record = {
-                        k.encode('utf-8'): v.encode('utf-8')
+                        k.encode('utf-8'): unicode(v).encode('utf-8')
                         for k, v in record.items()}
                 csv_writer.writerow(record)
 
