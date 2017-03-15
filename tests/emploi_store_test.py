@@ -131,6 +131,35 @@ class ClientTestCase(unittest.TestCase):
             },
             kwargs['params'])
 
+    def test_get_lbb_companies_by_city_id(self, mock_requests):
+        """Test the get_lbb_companies method using a city ID as input."""
+        mock_requests.post.return_value.status_code = 200
+        mock_requests.post.return_value.json.return_value = {
+            "access_token": "foobar",
+        }
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.json.return_value = {
+            "companies": [],
+        }
+
+        list(self.client.get_lbb_companies(
+            city_id='31555', rome_codes=['A1204']))
+
+        self.assertTrue(mock_requests.get.called)
+        unused_args, kwargs = mock_requests.get.call_args
+        self.assertEqual(
+            {
+                'distance': 10,
+                'commune_id': '31555',
+                'rome_codes': 'A1204',
+            },
+            kwargs['params'])
+
+    def test_get_lbb_companies_missing_location(self, mock_requests):
+        """Test the get_lbb_companies method when no location is given."""
+        generator = self.client.get_lbb_companies(rome_codes=['A1204'])
+        self.assertRaises(ValueError, next, generator)
+
 
 @mock.patch(emploi_store.__name__ + '.requests')
 class ResourceTest(unittest.TestCase):

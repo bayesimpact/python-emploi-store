@@ -135,9 +135,12 @@ class Client(object):
         return Package(self, **package_json)
 
     def get_lbb_companies(
-            self, latitude, longitude, distance=10,
-            rome_codes=None, naf_codes=None):
+            self, latitude=None, longitude=None, distance=10,
+            rome_codes=None, naf_codes=None, city_id=None):
         """Get a list of hiring companies from La Bonne Boite API.
+
+        See documentation at:
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-la-bonne-boite-v1.html
 
         Args:
             latitude: the latitude of the point near which to search for
@@ -149,16 +152,24 @@ class Client(object):
                 companies should hire.
             naf_codes: a list of NAF codes defining the activity sector of the
                 companies.
+            city_id: the INSEE code of the city to use as starting point for
+                the search.
         Yields:
             a dict per company, see
-            https://www.emploi-store-dev.fr/portail-developpeur-cms/files/live/sites/emploi-store-dev/files/documents/doc-technique-labonneboite-v1.1.pdf
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-la-bonne-boite-v1.html
             for details of the fields.
         """
         params = {
-            'latitude': latitude,
-            'longitude': longitude,
             'distance': distance,
         }
+        if city_id:
+            params['commune_id'] = city_id
+        elif latitude is None or longitude is None:
+            raise ValueError(
+                'One of city_id or (latitude, longitude) argument is required')
+        else:
+            params['latitude'] = latitude
+            params['longitude'] = longitude
         if rome_codes:
             params['rome_codes'] = ','.join(rome_codes)
         if naf_codes:
