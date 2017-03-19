@@ -284,7 +284,7 @@ class Resource(object):
                 csvfile, fieldnames, extrasaction='ignore')
             csv_writer.writeheader()
             for record in records:
-                record = {_strip_bom(k): v for k, v in record.items()}
+                record = {_strip_bom(k): unicode(v) for k, v in record.items()}
                 if need_utf8_encode:
                     record = {
                         k.encode('utf-8'): unicode(v).encode('utf-8')
