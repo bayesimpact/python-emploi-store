@@ -162,6 +162,37 @@ class ClientTestCase(unittest.TestCase):
 
 
 @mock.patch(emploi_store.__name__ + '.requests')
+class PackageTest(unittest.TestCase):
+    """Unit tests for the Package class."""
+
+    def setUp(self):
+        super(PackageTest, self).setUp()
+        self._client = emploi_store.Client('my-ID', 'my-Secret')
+
+    def test_get_resource_newer_version(self, mock_requests):
+        """Test the get_resource method with a specific pe_version."""
+        self.package = emploi_store.Package(
+            self._client, name='BMO', resources=[
+                {'name': 'BMO 2013', 'id': 'bmo-2013-1', 'pe_version': '1'},
+                {'name': 'BMO 2013', 'id': 'bmo-2013-2', 'pe_version': '2'},
+            ])
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'id': 'downloaded-id',
+                'name': 'Downloaded BMO',
+            },
+        })
+
+        res = self.package.get_resource(name='BMO 2013', pe_version='2')
+        self.assertEqual('Downloaded BMO', res.name)
+
+        mock_requests.get.assert_called_once()
+        id_requested = mock_requests.get.call_args[1]['params'].get('id')
+        self.assertEqual('bmo-2013-2', id_requested)
+
+
+@mock.patch(emploi_store.__name__ + '.requests')
 class ResourceTest(unittest.TestCase):
     """Unit tests for the Resource class."""
 

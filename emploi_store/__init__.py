@@ -207,18 +207,20 @@ class Package(object):
         """List all available resources in package."""
         return [r['name'] for r in self._resources]
 
-    def _get_resource_id(self, name, name_re):
+    def _get_resource_id(self, name, name_re, pe_version=None):
         for res in self._resources:
-            if res['name'] == name:
+            is_good_version = \
+                pe_version is None or pe_version == res.get('pe_version')
+            if res['name'] == name and is_good_version:
                 return res['id']
-            if name_re and name_re.match(res['name']):
+            if name_re and name_re.match(res['name']) and is_good_version:
                 return res['id']
         raise ValueError(
             'No resource found in the package that are named "%s" or match '
             'the regular expression "%s". Here are the names available:\n%s'
             % (name, name_re, '\n'.join(self.list_resources())))
 
-    def get_resource(self, name=None, name_re=None, resource_id=None):
+    def get_resource(self, name=None, name_re=None, resource_id=None, pe_version=None):
         """Get description of a resource.
 
         Get the description either from its full ID, from its name within its
@@ -227,7 +229,7 @@ class Package(object):
         if resource_id is None:
             if name is None and name_re is None:
                 raise ValueError('One of resource_id and name must be set')
-            resource_id = self._get_resource_id(name, name_re)
+            resource_id = self._get_resource_id(name, name_re, pe_version=pe_version)
         resource_json = self._client.api_get('/resource_show', id=resource_id)
         return Resource(self._client, **resource_json)
 
