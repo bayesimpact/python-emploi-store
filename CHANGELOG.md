@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.3.2 [2017-07-12]
+
+* Added support for selecting versioned resource by its PE version number.
+
 ## v0.3.1 [2017-03-15]
 
 * Added support for requesting LBB companies close to a city by its INSEE ID.
