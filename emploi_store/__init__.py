@@ -187,6 +187,33 @@ class Client(object):
             for company in companies:
                 yield company
 
+    def get_employment_rate_rank_for_training(self, formacode, city_id):
+        """Get the ranking of the employment rate for trainings.
+
+        See documentation at:
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-retouralemploiformation-v1.html
+
+        Args:
+            formacode: unique ID for the domain of the training. See
+                http://formacode.centre-inffo.fr
+            city_id: the INSEE code of the city where the training takes place.
+
+        Returns:
+            a dict, see
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-retouralemploiformation-v1.html
+            for details of the fields.
+        """
+        scope = 'api_retouralemploisuiteformationv1'
+        req = requests.get(
+            self.api_url + '/retouralemploisuiteformation/v1/rank',
+            params={'formacode': formacode, 'codeinseeville': city_id},
+            headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
+        if req.status_code != 200:
+            raise EnvironmentError(
+                'HTTP error %d for: \n%s' % (req.status_code, req.url))
+        response = req.json()
+        return response[0]
+
 
 class Package(object):
     """A package of resources available.

@@ -1,5 +1,10 @@
 # Change Log
 
+## v0.4.0 [2017-08-03]
+
+* Added support for the ["Retour à l'emploi suite formation"
+  API](https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-retouralemploiformation-v1.html).
+
 ## v0.3.2 [2017-07-12]
 
 * Added support for selecting versioned resource by its PE version number.

@@ -160,6 +160,49 @@ class ClientTestCase(unittest.TestCase):
         generator = self.client.get_lbb_companies(rome_codes=['A1204'])
         self.assertRaises(ValueError, next, generator)
 
+    def test_get_employment_rate_rank_for_training(self, mock_requests):
+        """Test the get_employment_rate_rank_for_training method."""
+        mock_requests.post.return_value.status_code = 200
+        mock_requests.post.return_value.json.return_value = {
+            "access_token": "foobar",
+        }
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.json.return_value = [{
+            "formacode": "22435",
+            "codeinsee-bassin": "52114",
+            "taux-bassin": "",
+            "taux-departemental": "",
+            "taux-regional": "0.4",
+            "taux-national": "0.6",
+        }]
+
+        ranking = self.client.get_employment_rate_rank_for_training(
+            city_id='69123', formacode='22435')
+
+        self.assertEqual(
+            {
+                "formacode": "22435",
+                "codeinsee-bassin": "52114",
+                "taux-bassin": "",
+                "taux-departemental": "",
+                "taux-regional": "0.4",
+                "taux-national": "0.6",
+            },
+            ranking)
+
+        self.assertTrue(mock_requests.get.called)
+        args, kwargs = mock_requests.get.call_args
+        self.assertEqual(
+            ('https://api.emploi-store.fr/partenaire/retouralemploisuiteformation/v1/rank',),
+            args)
+        self.assertEqual({'Authorization': 'Bearer foobar'}, kwargs['headers'])
+        self.assertEqual(
+            {
+                'codeinseeville': '69123',
+                'formacode': '22435',
+            },
+            kwargs['params'])
+
 
 @mock.patch(emploi_store.__name__ + '.requests')
 class PackageTest(unittest.TestCase):
