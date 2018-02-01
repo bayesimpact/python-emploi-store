@@ -203,6 +203,63 @@ class ClientTestCase(unittest.TestCase):
             },
             kwargs['params'])
 
+    def test_list_emploistore_services(self, mock_requests):
+        """Test the list_emploistore_services method."""
+        mock_requests.post.return_value.status_code = 200
+        mock_requests.post.return_value.json.return_value = {
+            "access_token": "foobar",
+        }
+        mock_requests.get.return_value.json.return_value = [
+            {
+                "identifiantService": "bobEmploi",
+                "nomService": "Bob",
+                "typeService": "coaching",
+            },
+            {
+                "identifiantService": "laBonneBoite",
+                "nomService": "La Bonne Boite",
+                "typeService": "Moteur de recherche",
+            },
+        ]
+
+        services = self.client.list_emploistore_services()
+
+        self.assertEqual(
+            ['Bob', 'La Bonne Boite'],
+            [service.get('nomService') for service in services])
+        self.assertTrue(mock_requests.get_called)
+        args, kwargs = mock_requests.get.call_args
+        self.assertEqual(
+            ('https://api.emploi-store.fr/partenaire/cataloguedesservicesemploistore/'
+             'v1/api-emploistore/fichesservices',),
+            args)
+        self.assertEqual({'headers': {'Authorization': 'Bearer foobar'}}, kwargs)
+
+    def test_describe_emploistore_service(self, mock_requests):
+        """Test the describe_emploistore_service method."""
+        mock_requests.post.return_value.status_code = 200
+        mock_requests.post.return_value.json.return_value = {
+            "access_token": "foobar",
+        }
+        mock_requests.get.return_value.json.return_value = {
+            "ficheService": {
+                "identifiantService": "bobEmploi",
+                "nomService": "Bob",
+                "typeService": "coaching",
+            },
+        }
+
+        service = self.client.describe_emploistore_service('bobEmploi')
+
+        self.assertEqual('Bob', service.get('ficheService', {}).get('nomService'))
+        self.assertTrue(mock_requests.get_called)
+        args, kwargs = mock_requests.get.call_args
+        self.assertEqual(
+            ('https://api.emploi-store.fr/partenaire/cataloguedesservicesemploistore/'
+             'v1/api-emploistore/fichesservices/bobEmploi/false',),
+            args)
+        self.assertEqual({'headers': {'Authorization': 'Bearer foobar'}}, kwargs)
+
 
 @mock.patch(emploi_store.__name__ + '.requests')
 class PackageTest(unittest.TestCase):

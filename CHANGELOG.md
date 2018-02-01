@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.5.0 [2018-02-01]
+
+* Added support for the ["Catalogue des services" API](https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-catalogueemploistore-v1.html).
+
 ## v0.4.0 [2017-08-03]
 
 * Added support for the ["Retour à l'emploi suite formation"
