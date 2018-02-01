@@ -214,6 +214,54 @@ class Client(object):
         response = req.json()
         return response[0]
 
+    def list_emploistore_services(self):
+        """List all the user-facing services proposed by the Emploi Store.
+
+        See the user-facing website at:
+            https://www.emploi-store.fr/portail/accueil
+
+        Returns:
+            a list of dicts, see
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-catalogueemploistore-v1/recuperer-les-services.html
+            for details of the fields. It includes "identifiantService" that
+            you can use for describe_emploistore_service.
+        """
+        scope = 'api_cataloguedesservicesemploistorev1 emploistoreusagers'
+        req = requests.get(
+            self.api_url + '/cataloguedesservicesemploistore/v1/api-emploistore/fichesservices',
+            headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
+        req.raise_for_status()
+        return req.json()
+
+    def describe_emploistore_service(self, service_id, should_get_images=False):
+        """Describe one of the service of the Emploi Store.
+
+        See the user-facing website at:
+            https://www.emploi-store.fr/portail/accueil
+
+        Args:
+            service_id: the unique ID of the service to describe, see the
+                result of list_emploistore_services. It's also the last par of
+                the URL on the Emploi Store website: e.g.
+                https://www.emploi-store.fr/portail/services/sInformerSurLAlternance
+            should_get_images: whether to retrieve related images (logo,
+                screenshots, etc.). If True, the response will have a field
+                ressourcesFicheService containing the imags base64 encoded.
+
+        Returns:
+            a list of dicts, see
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-catalogueemploistore-v1/consulter-un-service.html
+            for details of the fields.
+        """
+        scope = 'api_cataloguedesservicesemploistorev1 emploistoreusagers'
+        req = requests.get(
+            self.api_url +
+            '/cataloguedesservicesemploistore/v1/api-emploistore/fichesservices/%s/%s'
+            % (service_id, 'true' if should_get_images else 'false'),
+            headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
+        req.raise_for_status()
+        return req.json()
+
 
 class Package(object):
     """A package of resources available.
