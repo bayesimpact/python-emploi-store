@@ -395,6 +395,22 @@ class ResourceTest(unittest.TestCase):
 456,Ségond
 """, csv_content)
 
+    def test_num_records(self, mock_requests):
+        """Test the length of the records method."""
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'total': 42429,
+                'records': [{'id': 'hello'}],
+            },
+        })
+
+        records = self.res.records()
+        self.assertEqual(42429, len(records))
+        self.assertEqual([{'id': 'hello'}], list(records))
+
+        self.assertEqual(1, mock_requests.get.call_count)
+
 
 def _setup_mock_requests(
         mock_requests, get_json, post_json=None):

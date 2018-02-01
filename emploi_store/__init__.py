@@ -328,18 +328,13 @@ class Resource(object):
         res = self._client.api_get(
             '/datastore_search', limit=batch_size, offset=offset, id=self._id,
             filters=filters_json, fields=fields_list)
-        return res.get('records')
+        return res.get('total', 0), res.get('records')
 
     def records(self, batch_size=200, filters=None, fields=None):
         """Get all records from resource."""
-        offset = 0
-        while True:
-            batch = self._records_batch(offset, batch_size, filters, fields)
-            for record in batch:
-                yield record
-            if len(batch) != batch_size:
-                return
-            offset += batch_size
+        return _ResourceIterator(
+            lambda offset: self._records_batch(offset, batch_size, filters, fields),
+            batch_size)
 
     def to_csv(self, file_name, fieldnames=None, batch_size=200, filters=None):
         """Write all records to a CSV file.
@@ -367,6 +362,51 @@ class Resource(object):
                         k.encode('utf-8'): unicode(v).encode('utf-8')
                         for k, v in record.items()}
                 csv_writer.writerow(record)
+
+
+class _ResourceIterator(object):
+
+    def __init__(self, get_batch, batch_size):
+        self._get_batch = get_batch
+        self._batch_size = batch_size
+
+        self._offset = 0
+        self._generator = self._create_generator()
+
+        self._num_records = 0
+        self._first_batch = None
+
+    def _ensure_first_batch(self):
+        if self._first_batch is None:
+            self._num_records, self._first_batch = self._get_batch(0)
+        return self._num_records, self._first_batch
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._generator)
+
+    # For Python 2 compatibility.
+    def next(self):
+        return next(self._generator)
+
+    def _create_generator(self):
+        offset = 0
+        while True:
+            if offset == 0:
+                _, batch = self._ensure_first_batch()
+            else:
+                _, batch = self._get_batch(offset)
+            for record in batch:
+                yield record
+            if len(batch) != self._batch_size:
+                return
+            offset += self._batch_size
+
+    def __len__(self):
+        self._ensure_first_batch()
+        return self._num_records
 
 
 def _strip_bom(field):
