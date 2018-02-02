@@ -436,6 +436,36 @@ class ResourceTest(unittest.TestCase):
 
         self.assertEqual(1, mock_requests.get.call_count)
 
+    def test_to_csv_iterator_using_num_records(self, mock_requests):
+        """Test the iterator arg of the to_csv method."""
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'records': [
+                    {'CODE': '1', 'NAME': 'First'},
+                    {'CODE': '2', 'NAME': 'Second'},
+                    {'CODE': '3', 'NAME': 'Third'},
+                ],
+                'total': 201,
+            },
+        })
+        filename = self.tmpdir + '/bmo_2016.csv'
+
+        def _update_records(records):
+            num_records = len(records)
+            for index, record in enumerate(records):
+                yield dict(record, CODE='{} {}/{}'.format(record['CODE'], index + 1, num_records))
+
+        self.res.to_csv(filename, iterator=_update_records)
+
+        with open(filename) as csv_file:
+            csv_content = csv_file.read().replace('\r\n', '\n')
+        self.assertEqual("""CODE,NAME
+1 1/201,First
+2 2/201,Second
+3 3/201,Third
+""", csv_content)
+
 
 def _setup_mock_requests(
         mock_requests, get_json, post_json=None):
