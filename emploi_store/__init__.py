@@ -31,7 +31,6 @@ bmo_2014.to_csv('data/bmo_2014.csv')
 import collections
 import csv
 import datetime
-import itertools
 import json
 import os
 import sys
@@ -351,9 +350,7 @@ class Resource(object):
         records = self.records(batch_size=batch_size, filters=filters)
         need_utf8_encode = sys.version_info < (3, 0)
         if not fieldnames:
-            first = next(records)
-            # TODO(pascal): Fix this pattern so that it is possible to get the len of records.
-            records = itertools.chain([first], records)  # pylint: disable=redefined-variable-type
+            first = records.peek_first()
             keys = set(_strip_bom(k) for k in first.keys())
             fieldnames = sorted(keys - set(['_id']))
         if need_utf8_encode:
@@ -414,6 +411,11 @@ class _ResourceIterator(object):
     def __len__(self):
         self._ensure_first_batch()
         return self._num_records
+
+    def peek_first(self):
+        """Peek on the first record without consuming it."""
+        _, first_batch = self._ensure_first_batch()
+        return first_batch[0]
 
 
 def _strip_bom(field):
