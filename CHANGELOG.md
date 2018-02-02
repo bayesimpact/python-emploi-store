@@ -1,8 +1,9 @@
 # Change Log
 
-## v0.5.1 [2018-02-01]
+## Pending
 
 * Added the length of the records list in a resource without listing them all.
+* Added an argument to the to_csv method to modify records before saving them.
 
 ## v0.5.0 [2018-02-01]
 

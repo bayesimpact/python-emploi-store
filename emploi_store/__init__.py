@@ -336,16 +336,23 @@ class Resource(object):
             lambda offset: self._records_batch(offset, batch_size, filters, fields),
             batch_size)
 
-    def to_csv(self, file_name, fieldnames=None, batch_size=200, filters=None):
+    def to_csv(self, file_name, fieldnames=None, batch_size=200, filters=None, iterator=None):
         """Write all records to a CSV file.
 
-        If fieldnames isn't set, it will get them from the first record and
-        sort them alphabetically.
+        Args:
+            file_name: the path to the CSV file to create.
+            fieldnames: the list of fields to save. If not set, it will get
+                them from the first record and sort them alphabetically.
+            batch_size: the size of the batch of records to download.
+            filters: optional filters not to ask the whole resource.
+            iterator: a wrapper around the iterator on records, so that you can
+                modify the records or just keep track of progress.
         """
         records = self.records(batch_size=batch_size, filters=filters)
         need_utf8_encode = sys.version_info < (3, 0)
         if not fieldnames:
             first = next(records)
+            # TODO(pascal): Fix this pattern so that it is possible to get the len of records.
             records = itertools.chain([first], records)  # pylint: disable=redefined-variable-type
             keys = set(_strip_bom(k) for k in first.keys())
             fieldnames = sorted(keys - set(['_id']))
@@ -355,7 +362,7 @@ class Resource(object):
             csv_writer = csv.DictWriter(
                 csvfile, fieldnames, extrasaction='ignore')
             csv_writer.writeheader()
-            for record in records:
+            for record in iterator(records) if iterator else records:
                 record = {_strip_bom(k): v for k, v in record.items()}
                 if need_utf8_encode:
                     record = {
