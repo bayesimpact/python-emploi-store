@@ -2,6 +2,7 @@
 """Unit tests for emploi_store module."""
 import codecs
 import datetime
+import itertools
 import tempfile
 import shutil
 import unittest
@@ -393,6 +394,30 @@ class ResourceTest(unittest.TestCase):
         self.assertEqual(u"""CÖDE,NAME
 123,Fïrst
 456,Ségond
+""", csv_content)
+
+    def test_to_csv_iterator(self, mock_requests):
+        """Test the iterator arg of the to_csv method."""
+        _setup_mock_requests(mock_requests, {
+            'success': True,
+            'result': {
+                'records': [
+                    {'CODE': '1', 'NAME': 'First'},
+                    {'CODE': '2', 'NAME': 'Second'},
+                    {'CODE': '3', 'NAME': 'Third'},
+                    {'CODE': '4', 'NAME': 'Fourth'},
+                ],
+            },
+        })
+        filename = self.tmpdir + '/bmo_2016.csv'
+
+        self.res.to_csv(filename, iterator=lambda r: itertools.islice(r, 0, None, 2))
+
+        with open(filename) as csv_file:
+            csv_content = csv_file.read().replace('\r\n', '\n')
+        self.assertEqual("""CODE,NAME
+1,First
+3,Third
 """, csv_content)
 
     def test_num_records(self, mock_requests):
