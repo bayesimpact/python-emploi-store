@@ -261,6 +261,38 @@ class ClientTestCase(unittest.TestCase):
             args)
         self.assertEqual({'headers': {'Authorization': 'Bearer foobar'}}, kwargs)
 
+    def test_list_online_events(self, mock_requests):
+        """Test the list_online_events method."""
+        mock_requests.post.return_value.status_code = 200
+        mock_requests.post.return_value.json.return_value = {
+            'access_token': 'foobar',
+        }
+        mock_requests.get.return_value.json.return_value = [
+            {
+                'titre': 'Recrutement ADMR',
+                'nombreOffres': 4,
+            },
+            {
+                'titre': 'la transition écologique: rejoignez HITECH !',
+                'nombreOffres': 2,
+            },
+        ]
+
+        events = self.client.list_online_events()
+
+        self.assertEqual(
+            ['Recrutement ADMR', 'la transition écologique: rejoignez HITECH !'],
+            [event.get('titre') for event in events])
+        self.assertTrue(mock_requests.get_called)
+        args, kwargs = mock_requests.get.call_args
+        self.assertEqual(
+            ('https://api.emploi-store.fr/partenaire/evenements/v1/salonsenligne',),
+            args)
+        self.assertEqual({'headers': {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer foobar',
+        }}, kwargs)
+
 
 @mock.patch(emploi_store.__name__ + '.requests')
 class PackageTest(unittest.TestCase):
