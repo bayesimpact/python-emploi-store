@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.6.0 [2018-02-08]
+
+* Added support for the ["Salons en lignes" Events API](https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-evenements-pole-emploi-v1.html).
+
 ## v0.5.2 [2018-02-02]
 
 * Added the length of the records list in a resource without listing them all.
