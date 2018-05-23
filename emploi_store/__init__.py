@@ -135,7 +135,7 @@ class Client(object):
 
     def get_lbb_companies(
             self, latitude=None, longitude=None, distance=10,
-            rome_codes=None, naf_codes=None, city_id=None):
+            rome_codes=None, naf_codes=None, city_id=None, contract=None):
         """Get a list of hiring companies from La Bonne Boite API.
 
         See documentation at:
@@ -153,6 +153,10 @@ class Client(object):
                 companies.
             city_id: the INSEE code of the city to use as starting point for
                 the search.
+            contract: type of contract that the companies are most likely to
+                propose: "dpae" (Déclaration Préalable À l'Embauche, i.e. actual
+                hiring), or "alternance" (half-time job, with another half-time
+                studying). The default (None) is equivalent to "dpae".
         Yields:
             a dict per company, see
             https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-la-bonne-boite-v1.html
@@ -173,6 +177,8 @@ class Client(object):
             params['rome_codes'] = ','.join(rome_codes)
         if naf_codes:
             params['naf_codes'] = ','.join(naf_codes)
+        if contract:
+            params['contract'] = contract
         scope = 'api_labonneboitev1'
         req = requests.get(
             self.api_url + '/labonneboite/v1/company/', params=params,
