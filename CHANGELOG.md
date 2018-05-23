@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.7.0 [2018-05-23]
+
+* Added support for the `contract` parameter of ["La Bonne Boite" API](https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-la-bonne-boite-v1/rechercher-des-entreprises.html) which accesses the data served at ["La Bonne Alternance"](https://labonnealternance.pole-emploi.fr/).
+
 ## v0.6.0 [2018-02-08]
 
 * Added support for the ["Salons en lignes" Events API](https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-evenements-pole-emploi-v1.html).

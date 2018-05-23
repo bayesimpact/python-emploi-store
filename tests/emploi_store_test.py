@@ -204,6 +204,45 @@ class ClientTestCase(unittest.TestCase):
             },
             kwargs['params'])
 
+    def test_la_bonne_alternance(self, mock_requests):
+        """Test the get_lbb_companies method to access data from La Bonne Alternance."""
+        mock_requests.post.return_value.status_code = 200
+        mock_requests.post.return_value.json.return_value = {
+            "access_token": "foobar",
+        }
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.json.return_value = {
+            "companies": [
+                {"one": 1},
+                {"two": 2},
+            ],
+        }
+
+        companies = self.client.get_lbb_companies(
+            45, 2.1, rome_codes=['A1204', 'B1201'], contract='alternance')
+
+        self.assertFalse(mock_requests.get.called)
+
+        companies = list(companies)
+
+        self.assertEqual([{"one": 1}, {"two": 2}], companies)
+
+        self.assertTrue(mock_requests.get.called)
+        args, kwargs = mock_requests.get.call_args
+        self.assertEqual(
+            ('https://api.emploi-store.fr/partenaire/labonneboite/v1/company/',),
+            args)
+        self.assertEqual({'Authorization': 'Bearer foobar'}, kwargs['headers'])
+        self.assertEqual(
+            {
+                'distance': 10,
+                'latitude': 45,
+                'longitude': 2.1,
+                'rome_codes': 'A1204,B1201',
+                'contract': 'alternance',
+            },
+            kwargs['params'])
+
     def test_list_emploistore_services(self, mock_requests):
         """Test the list_emploistore_services method."""
         mock_requests.post.return_value.status_code = 200
