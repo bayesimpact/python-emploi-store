@@ -84,7 +84,7 @@ class Client(object):
                 'client_secret': self._client_secret,
                 'scope': 'application_%s %s' % (self._client_id, scope),
             })
-        if auth_request.status_code != 200:
+        if auth_request.status_code < 200 and auth_request.status_code >= 400:
             raise ValueError('Client ID or secret invalid')
         response = auth_request.json()
         token = response.get('access_token')
@@ -218,6 +218,35 @@ class Client(object):
                 'HTTP error %d for: \n%s' % (req.status_code, req.url))
         response = req.json()
         return response[0]
+
+    def get_match_via_soft_skills(self, rome):
+        """Get the soft skills for a specific job group sorted by significance.
+
+        See documentation at:
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-matchviasoftskills-v1.html
+
+        Args:
+            rome: unique ID for the job group. See
+                https://www.pole-emploi.fr/candidat/le-code-rome-et-les-fiches-metiers-@/article.jspz?id=60702
+
+        Yields:
+            a dict per skill, see
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-matchviasoftskills-v1.html
+            for details of the fields.
+        """
+        scope = 'api_matchviasoftskillsv1'
+        req = requests.post(
+            self.api_url + '/matchviasoftskills/v1/professions/job_skills',
+            params={'code': rome},
+            headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
+        if req.status_code != 201:
+            raise EnvironmentError(
+                'HTTP error %d for: \n%s' % (req.status_code, req.url))
+        response = req.json()
+        skills = response.get('skills')
+        if skills:
+            for skill in skills:
+                yield skills[skill]
 
     def list_emploistore_services(self):
         """List all the user-facing services proposed by the Emploi Store.
