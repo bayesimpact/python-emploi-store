@@ -204,6 +204,38 @@ class ClientTestCase(unittest.TestCase):
             },
             kwargs['params'])
 
+    def test_get_match_via_soft_skills(self, mock_requests):
+        """Test the match_via_soft_skills method."""
+        mock_requests.post.return_value.status_code = 200
+        mock_requests.post.return_value.json.return_value = {
+            "access_token": "foobar",
+        }
+        mock_requests.post.return_value.status_code = 201
+        mock_requests.post.return_value.json.return_value = {
+            "uuid": 'something',
+            "code": "A1204",
+            "create_at": 'a date and time',
+            "skills": {
+                "soft_skill_1": {"score": 1},
+                "soft_skill_2": {"score" : 2},
+            },
+        }
+
+        skills = self.client.get_match_via_soft_skills('A1204')
+
+        self.assertFalse(mock_requests.get.called)
+
+        skills = list(skills)
+
+        self.assertEqual([{"score": 1}, {"score": 2}], sorted(skills, key=lambda s: s["score"]))
+
+        self.assertTrue(mock_requests.post.called)
+        args, kwargs = mock_requests.post.call_args
+        self.assertEqual((
+            'https://api.emploi-store.fr/partenaire/matchviasoftskills/v1/professions/job_skills',),
+            args)
+        self.assertEqual({'code': 'A1204'}, kwargs['params'])
+
     def test_la_bonne_alternance(self, mock_requests):
         """Test the get_lbb_companies method to access data from La Bonne Alternance."""
         mock_requests.post.return_value.status_code = 200
