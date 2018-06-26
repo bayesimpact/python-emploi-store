@@ -9,6 +9,7 @@ import unittest
 
 import emploi_store
 import mock
+import requests
 
 # TODO: Add more tests.
 
@@ -42,6 +43,15 @@ class ClientTestCase(unittest.TestCase):
             'application_my-ID my-scope',
             mock_requests.post.call_args[1]['data']['scope'])
         self.assertEqual('foobar', token)
+
+    def test_access_fails(self, mock_requests):
+        """Test the access_token method."""
+
+        # TODO(marielaure): Use requests_mock package here.
+        http_error = requests.exceptions.HTTPError()
+        mock_requests.post().raise_for_status.side_effect = http_error
+
+        self.assertRaises(ValueError)
 
     @mock.patch(emploi_store.__name__ + '.datetime')
     def test_access_token_reuse(self, mock_datetime, mock_requests):
