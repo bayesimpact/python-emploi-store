@@ -43,6 +43,13 @@ class ClientTestCase(unittest.TestCase):
             mock_requests.post.call_args[1]['data']['scope'])
         self.assertEqual('foobar', token)
 
+    def test_access_fails(self, mock_requests):
+        """Test the access_token method."""
+        mock_requests.post.return_value = mock.MagicMock()
+        mock_requests.post.return_value.status_code = 400
+
+        self.assertRaises(ValueError)
+
     @mock.patch(emploi_store.__name__ + '.datetime')
     def test_access_token_reuse(self, mock_datetime, mock_requests):
         """Test the access_token just after a token was fetched."""
