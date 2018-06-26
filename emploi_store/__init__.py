@@ -84,8 +84,11 @@ class Client(object):
                 'client_secret': self._client_secret,
                 'scope': 'application_%s %s' % (self._client_id, scope),
             })
-        if auth_request.status_code < 200 and auth_request.status_code >= 400:
-            raise ValueError('Client ID or secret invalid')
+        try:
+            auth_request.raise_for_status()
+        except Exception as error:
+            raise ValueError('Autentication failed: {}'.format(error))
+
         response = auth_request.json()
         token = response.get('access_token')
         expires_in = datetime.timedelta(seconds=response.get('expires_in', 600))
