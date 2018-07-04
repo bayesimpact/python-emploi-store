@@ -1,5 +1,6 @@
 # encoding: utf-8
 """Python client library for Pôle Emploi's "Emploi Store Dev"."""
+
 import setuptools
 
 __version__ = '0.8.0'
@@ -16,6 +17,6 @@ setuptools.setup(
     license='The MIT License (MIT)',
     keywords=['Pôle Emploi', 'France', 'emploi', 'OpenData'],
     install_requires=['requests'],
-    extras_require={'dev': ['mock', 'nose', 'nose-watch']},
+    extras_require={'dev': ['mock', 'nose', 'nose-watch', 'requests-mock']},
     classifiers=[],
 )
