@@ -102,9 +102,7 @@ class Client(object):
         req = requests.get(
             self.api_url + '/infotravail/v1' + action, params=params,
             headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
-        if req.status_code != 200:
-            raise EnvironmentError(
-                'HTTP error %d for: \n%s' % (req.status_code, req.url))
+        req.raise_for_status()
         response = req.json()
         if not response.get('success'):
             return None
@@ -186,9 +184,7 @@ class Client(object):
         req = requests.get(
             self.api_url + '/labonneboite/v1/company/', params=params,
             headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
-        if req.status_code != 200:
-            raise EnvironmentError(
-                'HTTP error %d for: \n%s' % (req.status_code, req.url))
+        req.raise_for_status()
         response = req.json()
         companies = response.get('companies')
         if companies:
@@ -216,9 +212,7 @@ class Client(object):
             self.api_url + '/retouralemploisuiteformation/v1/rank',
             params={'formacode': formacode, 'codeinseeville': city_id},
             headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
-        if req.status_code != 200:
-            raise EnvironmentError(
-                'HTTP error %d for: \n%s' % (req.status_code, req.url))
+        req.raise_for_status()
         response = req.json()
         return response[0]
 
@@ -242,9 +236,7 @@ class Client(object):
             self.api_url + '/matchviasoftskills/v1/professions/job_skills',
             params={'code': rome},
             headers={'Authorization': 'Bearer %s' % self.access_token(scope)})
-        if req.status_code != 201:
-            raise EnvironmentError(
-                'HTTP error %d for: \n%s' % (req.status_code, req.url))
+        req.raise_for_status()
         response = req.json()
         skills = response.get('skills')
         if skills:
