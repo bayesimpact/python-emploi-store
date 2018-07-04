@@ -55,7 +55,6 @@ setup a test environment we generally use Docker to isolate the tests.
 
 ```sh
 docker run --rm -it -v $(pwd):/work/:ro -w /work/ python:3 bash
-pip install .
 pip install .[dev]
 ```
 

@@ -1,0 +1,33 @@
+vesrion: 2
+jobs:
+  test-python3:
+    docker:
+      # TODO(pascal): Revert to python:3 when
+      # https://github.com/yaml/pyyaml/issues/193 is fixed.
+      - image: python:3.6
+    steps:
+      - checkout
+      - run:
+          name: Install requirements for test
+          command: pip install .[dev]
+      - run:
+          name: Actually run the tests
+          command: nosetests
+  test-python2:
+    docker:
+      - image: python:2
+    steps:
+      - checkout
+      - run:
+          name: Install requirements for test
+          command: pip install .[dev]
+      - run:
+          name: Actually run the tests
+          command: nosetests
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - "test-python2"
+      - "test-python3"
