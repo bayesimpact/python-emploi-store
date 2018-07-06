@@ -136,6 +136,22 @@ class ClientTestCase(unittest.TestCase):
         generator = self.client.get_lbb_companies(rome_codes=['A1204'])
         self.assertRaises(ValueError, next, generator)
 
+    def test_get_lbb_companies_fail(self, mock_requests):
+        """Test the get_lbb_companies method if the server fails."""
+
+        mock_requests.post(
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            json={'access_token': 'foobar'})
+        mock_requests.get(
+            'https://api.emploi-store.fr/partenaire/labonneboite/v1/company/?'
+            'distance=10&latitude=45&longitude=2.1&rome_codes=A1204%2CB1201',
+            headers={'Authorization': 'Bearer foobar'},
+            status_code=502, reason='Internal Failure')
+
+        companies = self.client.get_lbb_companies(45, 2.1, rome_codes=['A1204', 'B1201'])
+        with self.assertRaises(emploi_store.requests.exceptions.HTTPError):
+            list(companies)
+
     def test_get_employment_rate_rank_for_training(self, mock_requests):
         """Test the get_employment_rate_rank_for_training method."""
 
@@ -169,6 +185,22 @@ class ClientTestCase(unittest.TestCase):
             },
             ranking)
 
+    def test_get_employment_rate_rank_for_training_fail(self, mock_requests):
+        """Test the get_employment_rate_rank_for_training method when the server fails."""
+
+        mock_requests.post(
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            json={'access_token': 'foobar'})
+        mock_requests.get(
+            'https://api.emploi-store.fr/partenaire/retouralemploisuiteformation/v1/rank?'
+            'codeinseeville=69123&formacode=22435',
+            headers={'Authorization': 'Bearer foobar'},
+            status_code=502, reason='Internal Failure')
+
+        with self.assertRaises(emploi_store.requests.exceptions.HTTPError):
+            self.client.get_employment_rate_rank_for_training(
+                city_id='69123', formacode='22435')
+
     def test_get_match_via_soft_skills(self, mock_requests):
         """Test the match_via_soft_skills method."""
 
@@ -193,6 +225,21 @@ class ClientTestCase(unittest.TestCase):
         skills = list(self.client.get_match_via_soft_skills('A1204'))
 
         self.assertEqual([{'score': 1}, {'score': 2}], sorted(skills, key=lambda s: s['score']))
+
+    def test_get_match_via_soft_skills_fail(self, mock_requests):
+        """Test the match_via_soft_skills method when the server fails."""
+
+        mock_requests.post(
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            json={'access_token': 'foobar'})
+        mock_requests.post(
+            'https://api.emploi-store.fr/partenaire/matchviasoftskills/v1/professions/job_skills?'
+            'code=A1204',
+            headers={'Authorization': 'Bearer foobar'},
+            status_code=502, reason='Internal Failure')
+
+        with self.assertRaises(emploi_store.requests.exceptions.HTTPError):
+            list(self.client.get_match_via_soft_skills('A1204'))
 
     def test_la_bonne_alternance(self, mock_requests):
         """Test the get_lbb_companies method to access data from La Bonne Alternance."""
