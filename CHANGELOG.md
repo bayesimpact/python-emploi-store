@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.8.1 [2018-08-16]
+
+Not a real release, only updated testing and documentation.
+
 ## v0.8.0 [2018-06-08]
 
 * Added support for the ["Match via Soft Skills" API](https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-matchviasoftskills-v1.html).

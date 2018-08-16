@@ -68,3 +68,16 @@ nosetests --with-watch
 
 * To stop watching the tests, hit Ctrl-C in the terminal. Then to exit the
   Docker container, hit Ctrl-D.
+
+## Release
+
+To release a new version of the library:
+
+* Make sure the [Changelog](./CHANGELOG.md) file is up to date.
+* Update the version number in [setup.py](./setup.py).
+* Tag the code with git.
+* Build and upload the package to [PyPi](https://pypi.org/project/python-emploi-store/):
+
+```sh
+python setup.py sdist upload
+```
