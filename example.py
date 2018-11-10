@@ -16,6 +16,7 @@ server:
 """
 import os
 import re
+import typing
 
 import emploi_store
 import flask
@@ -29,8 +30,8 @@ _ROME_APPELLATIONS = (
     .get_resource(name_re=re.compile(r'.*appellations.*')))
 
 
-@app.route("/")
-def main():
+@app.route("/")  # type: ignore
+def main() -> str:
     """Homepage."""
     page = (
         '<form action=".">'

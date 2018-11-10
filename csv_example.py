@@ -11,7 +11,7 @@ https://www.emploi-store-dev.fr/portail-developpeur/donneesdoctechnique
 import emploi_store
 
 
-def main():
+def main() -> None:
     """Download the "Référentiel des familles de métier" from the API."""
     client = emploi_store.Client()
     bmo_package = client.get_package('bmo')

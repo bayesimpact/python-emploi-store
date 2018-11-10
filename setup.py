@@ -17,6 +17,6 @@ setuptools.setup(
     license='The MIT License (MIT)',
     keywords=['Pôle Emploi', 'France', 'emploi', 'OpenData'],
     install_requires=['requests'],
-    extras_require={'dev': ['mock', 'nose', 'nose-watch', 'requests-mock']},
+    extras_require={'dev': ['mock', 'mypy', 'nose', 'nose-watch', 'requests-mock']},
     classifiers=[],
 )

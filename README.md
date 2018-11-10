@@ -58,6 +58,12 @@ docker run --rm -it -v $(pwd):/work/:ro -w /work/ python:3 bash
 pip install .[dev]
 ```
 
+* Run the type-checker:
+
+```sh
+mypy . --strict --ignore-missing-imports
+```
+
 * Run the tests, and automatically re-run them when files are changed:
 
 ```sh
