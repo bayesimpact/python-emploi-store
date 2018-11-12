@@ -3,11 +3,12 @@
 
 import setuptools
 
-__version__ = '0.8.1'
+__version__ = '0.8.2'
 
 setuptools.setup(
     name='python-emploi-store',
     packages=['emploi_store'],
+    package_data={'emploi_store': ['py.typed']},
     version=__version__,
     description=__doc__,
     author='Pascal Corpet',
