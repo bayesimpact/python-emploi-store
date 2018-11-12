@@ -1,4 +1,4 @@
-vesrion: 2
+version: 2
 jobs:
   test-python3:
     docker:
@@ -12,7 +12,10 @@ jobs:
           command: pip install .[dev]
       - run:
           name: Actually run the tests
-          command: nosetests
+          command: nosetests --with-coverage
+      - run:
+          name: Uploading coverage to codecov.io
+          command: codecov
   test-python2:
     docker:
       - image: python:2
