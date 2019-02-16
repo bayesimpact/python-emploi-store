@@ -296,12 +296,30 @@ class Client(object):
 
         Returns:
             a list of dicts, see
-            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api-evenements-pole-emploi-v1/rechercher-les-salons-en-ligne.html
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api/api-evenements-pole-emploi-v1/rechercher-les-salons-en-ligne.html
             for details of the fields.
         """
         scope = 'api_evenementsv1 evenements'
         req = requests.get(
             self.api_url + '/evenements/v1/salonsenligne',
+            headers={
+                'Accept': 'application/json',
+                'Authorization': 'Bearer %s' % self.access_token(scope),
+            })
+        req.raise_for_status()
+        return req.json()
+
+    def list_physical_events(self):
+        """List physical events.
+
+        Returns:
+            a list of dicts, see
+            https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/api/api-evenements-pole-emploi-v1/rechercher-les-evenements-physiq.html
+            for details of the fields.
+        """
+        scope = 'api_evenementsv1 evenements'
+        req = requests.get(
+            self.api_url + '/evenements/v1/evenementsphysiques',
             headers={
                 'Accept': 'application/json',
                 'Authorization': 'Bearer %s' % self.access_token(scope),
