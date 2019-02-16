@@ -358,7 +358,7 @@ class ClientTestCase(unittest.TestCase):
             },
             json=[
                 {
-                    'titre': '"Tremplin de l\'emploi" à Wittelsheim',
+                    'titre': u'"Tremplin de l\'emploi" à Wittelsheim',
                     'categorie': 'Salon',
                     'dateDebut': '12/03/2019',
                     'dateFin': '12/03/2019',
@@ -388,7 +388,7 @@ class ClientTestCase(unittest.TestCase):
         events = self.client.list_physical_events()
 
         self.assertEqual(
-            ['"Tremplin de l\'emploi" à Wittelsheim','10 clics pour un emploi'],
+            [u'"Tremplin de l\'emploi" à Wittelsheim','10 clics pour un emploi'],
             [event.get('titre') for event in events])
 
         self.assertEqual(
