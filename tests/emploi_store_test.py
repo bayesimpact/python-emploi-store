@@ -343,7 +343,6 @@ class ClientTestCase(unittest.TestCase):
             ['Recrutement ADMR', u'la transition écologique: rejoignez HITECH !'],
             [event.get('titre') for event in events])
 
-
     def test_list_physical_events(self, mock_requests):
         """Test the list_physical_events method."""
 
@@ -383,17 +382,18 @@ class ClientTestCase(unittest.TestCase):
                     'latitudeGps': '47.290804',
                     'longitudeGps': '-2.393948',
                 },
-        ])
+            ])
 
         events = self.client.list_physical_events()
 
         self.assertEqual(
-            [u'"Tremplin de l\'emploi" à Wittelsheim','10 clics pour un emploi'],
+            [u'"Tremplin de l\'emploi" à Wittelsheim', '10 clics pour un emploi'],
             [event.get('titre') for event in events])
 
         self.assertEqual(
-            ['Wittelsheim','LA BAULE'],
+            ['Wittelsheim', 'LA BAULE'],
             [event.get('ville') for event in events])
+
 
 @requests_mock.Mocker()
 class PackageTest(unittest.TestCase):
