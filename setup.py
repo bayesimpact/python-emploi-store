@@ -17,7 +17,16 @@ setuptools.setup(
     download_url='https://github.com/bayesimpact/python-emploi-store/tarball/' + __version__,
     license='The MIT License (MIT)',
     keywords=['Pôle Emploi', 'France', 'emploi', 'OpenData'],
-    install_requires=['requests'],
-    extras_require={'dev': ['codecov', 'coverage', 'mock', 'nose', 'nose-watch', 'requests-mock']},
+    install_requires=['requests', 'six'],
+    extras_require={'dev': [
+        'codecov',
+        'coverage',
+        'mock',
+        'nose',
+        'nose-watch',
+        'pylint',
+        'pylint-quotes',
+        'requests-mock',
+    ]},
     classifiers=[],
 )

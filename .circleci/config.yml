@@ -16,6 +16,9 @@ jobs:
       - run:
           name: Uploading coverage to codecov.io
           command: codecov
+      - run:
+          name: Check style errors
+          command: pylint --load-plugins pylint_quotes emploi_store tests
   test-python2:
     docker:
       - image: python:2
@@ -26,7 +29,13 @@ jobs:
           command: pip install .[dev]
       - run:
           name: Actually run the tests
-          command: nosetests
+          command: nosetests --with-coverage
+      - run:
+          name: Uploading coverage to codecov.io
+          command: codecov
+      - run:
+          name: Check style errors
+          command: pylint --load-plugins pylint_quotes emploi_store tests
 
 workflows:
   version: 2
