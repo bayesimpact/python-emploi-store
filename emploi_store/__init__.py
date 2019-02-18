@@ -36,6 +36,7 @@ import os
 import sys
 
 import requests
+import six
 
 # Byte Order Mark. https://en.wikipedia.org/wiki/Byte_order_mark
 _BOM = u'\ufeff'
@@ -396,13 +397,13 @@ class Resource(object):
                 modify the records or just keep track of progress.
         """
         records = self.records(batch_size=batch_size, filters=filters)
-        need_utf8_encode = sys.version_info < (3, 0)
+        need_utf8_encode = six.PY2
         if not fieldnames:
             first = records.peek_first()
             keys = set(_strip_bom(k) for k in first.keys())
             fieldnames = sorted(keys - set(['_id']))
         if need_utf8_encode:
-            fieldnames = [f.encode('utf-8') for f in fieldnames]
+            fieldnames = [six.ensure_str(f, encoding='utf-8') for f in fieldnames]
         with open(file_name, 'wt') as csvfile:
             csv_writer = csv.DictWriter(
                 csvfile, fieldnames, extrasaction='ignore')
@@ -411,7 +412,8 @@ class Resource(object):
                 record = {_strip_bom(k): v for k, v in record.items()}
                 if need_utf8_encode:
                     record = {
-                        k.encode('utf-8'): unicode(v).encode('utf-8')
+                        six.ensure_str(k, encoding='utf-8'):
+                        six.ensure_str(six.text_type(v), encoding='utf-8')
                         for k, v in record.items()}
                 csv_writer.writerow(record)
 
@@ -441,6 +443,7 @@ class _ResourceIterator(object):
 
     # For Python 2 compatibility.
     def next(self):
+        """Get next resource."""
         return next(self._generator)
 
     def _create_generator(self):
