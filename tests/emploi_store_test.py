@@ -343,6 +343,57 @@ class ClientTestCase(unittest.TestCase):
             ['Recrutement ADMR', u'la transition écologique: rejoignez HITECH !'],
             [event.get('titre') for event in events])
 
+    def test_list_physical_events(self, mock_requests):
+        """Test the list_physical_events method."""
+
+        mock_requests.post(
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            json={'access_token': 'foobar'})
+        mock_requests.get(
+            'https://api.emploi-store.fr/partenaire/evenements/v1/evenementsphysiques',
+            headers={
+                'Accept': 'application/json',
+                'Authorization': 'Bearer foobar',
+            },
+            json=[
+                {
+                    'titre': u'"Tremplin de l\'emploi" à Wittelsheim',
+                    'categorie': 'Salon',
+                    'dateDebut': '12/03/2019',
+                    'dateFin': '12/03/2019',
+                    'periode': 'de 9h à 17h',
+                    'rue': '111, rue de Reiningue',
+                    'codePostal': '68310',
+                    'ville': 'Wittelsheim',
+                    'region': 'Grand Est',
+                    'latitudeGps': '47.792960',
+                    'longitudeGps': '7.228931',
+                },
+                {
+                    'titre': '10 clics pour un emploi',
+                    'categorie': "Semaine d'événements",
+                    'dateDebut': '25/02/2019',
+                    'dateFin': '25/02/2019',
+                    'periode': '14h - 15h30',
+                    'rue': '3 bis Avenue des Noëlles',
+                    'codePostal': '44500',
+                    'ville': 'LA BAULE',
+                    'region': 'Pays de la Loire',
+                    'latitudeGps': '47.290804',
+                    'longitudeGps': '-2.393948',
+                },
+            ])
+
+        events = self.client.list_physical_events()
+
+        self.assertEqual(
+            [u'"Tremplin de l\'emploi" à Wittelsheim', '10 clics pour un emploi'],
+            [event.get('titre') for event in events])
+
+        self.assertEqual(
+            ['Wittelsheim', 'LA BAULE'],
+            [event.get('ville') for event in events])
+
 
 @requests_mock.Mocker()
 class PackageTest(unittest.TestCase):
