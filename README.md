@@ -40,9 +40,12 @@ As documented on their
 
 * [Sign-in](https://www.emploi-store-dev.fr/portail-developpeur/donneesdoctechnique:connexion) or [create a new account](https://www.emploi-store-dev.fr/portail-developpeur/creationutilisateur)
 * Go to your [dashboard](https://www.emploi-store-dev.fr/portail-developpeur/tableaudebord)
-* Add an application, check `Oui` to the question `Utilisation de l’API Pôle
-  emploi` and agree to the terms of use
-* The client ID and secret are then available as `Identifiant client` and `Clé secrète`
+* Add an application and agree to the terms of use
+* Subscribe to the [Infotravail v1 API](https://www.emploi-store-dev.fr/portail-developpeur/detailapicatalogue/-infotravail-v1?id=57909ba23b2b8d019ee6cc5e) by clicking `DEMANDE D'ACCÈS` and selecting your application.
+* The client ID and secret are then available as `Identifiant` and `Clé secrète`
+
+For more information about the Pole-Emploi API subscription, [read its documentation](https://www.emploi-store-dev.fr/portail-developpeur-cms/home/catalogue-des-api/documentation-des-api/souscrire-api.html).
+
 
 ## Development
 
