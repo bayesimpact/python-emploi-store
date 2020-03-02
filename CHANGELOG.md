@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.9.0 [2020-03-02]
+
+* Fix call to OAuth2 /access_token endpoint to send the realm parameter in the URL.
+
 ## v0.8.1 [2018-08-16]
 
 Not a real release, only updated testing and documentation.

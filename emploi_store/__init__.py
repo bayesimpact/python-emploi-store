@@ -77,9 +77,8 @@ class Client(object):
                 return token.value
 
         auth_request = requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             data={
-                'realm': '/partenaire',
                 'grant_type': 'client_credentials',
                 'client_id': self._client_id,
                 'client_secret': self._client_secret,
