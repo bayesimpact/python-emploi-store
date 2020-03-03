@@ -34,7 +34,7 @@ class ClientTestCase(unittest.TestCase):
                 'scope=application_my-ID+my-scope' in data
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             additional_matcher=_match_request_data,
             json={'access_token': 'foobar'})
 
@@ -45,7 +45,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the access_token method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             status_code=401)
 
         with self.assertRaises(ValueError):
@@ -56,7 +56,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the access_token just after a token was fetched."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'first-token', 'expires_in': 500})
         now = datetime.datetime(2016, 3, 11)
         mock_datetime.datetime.now.return_value = now
@@ -65,7 +65,7 @@ class ClientTestCase(unittest.TestCase):
         self.client.access_token('my-scope')
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'second-token', 'expires_in': 500})
         now += datetime.timedelta(seconds=40)
         mock_datetime.datetime.now.return_value = now
@@ -79,7 +79,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the access_token just after a token was fetched."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'first-token', 'expires_in': 20})
         now = datetime.datetime(2016, 3, 11)
         mock_datetime.datetime.now.return_value = now
@@ -90,7 +90,7 @@ class ClientTestCase(unittest.TestCase):
         now += datetime.timedelta(seconds=40)
         mock_datetime.datetime.now.return_value = now
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'second token', 'expires_in': 20})
 
         token = self.client.access_token('my-scope')
@@ -101,7 +101,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the get_lbb_companies method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/labonneboite/v1/company/?'
@@ -118,7 +118,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the get_lbb_companies method using a city ID as input."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/labonneboite/v1/company/?'
@@ -140,7 +140,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the get_lbb_companies method if the server fails."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/labonneboite/v1/company/?'
@@ -156,7 +156,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the get_employment_rate_rank_for_training method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/retouralemploisuiteformation/v1/rank?'
@@ -189,7 +189,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the get_employment_rate_rank_for_training method when the server fails."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/retouralemploisuiteformation/v1/rank?'
@@ -205,7 +205,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the match_via_soft_skills method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.post(
             'https://api.emploi-store.fr/partenaire/matchviasoftskills/v1/professions/job_skills?'
@@ -230,7 +230,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the match_via_soft_skills method when the server fails."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.post(
             'https://api.emploi-store.fr/partenaire/matchviasoftskills/v1/professions/job_skills?'
@@ -245,7 +245,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the get_lbb_companies method to access data from La Bonne Alternance."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/labonneboite/v1/company/?'
@@ -267,7 +267,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the list_emploistore_services method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/cataloguedesservicesemploistore/'
@@ -296,7 +296,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the describe_emploistore_service method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/cataloguedesservicesemploistore/'
@@ -318,7 +318,7 @@ class ClientTestCase(unittest.TestCase):
         """Test the list_online_events method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/evenements/v1/salonsenligne',
@@ -413,7 +413,7 @@ class PackageTest(unittest.TestCase):
             ])
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/resource_show?id=bmo-2013-2',
@@ -450,7 +450,7 @@ class ResourceTest(unittest.TestCase):
         """Test the to_csv method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/datastore_search?'
@@ -480,7 +480,7 @@ class ResourceTest(unittest.TestCase):
         """Test the to_csv method when resource returns numbers directly."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/datastore_search?'
@@ -510,7 +510,7 @@ class ResourceTest(unittest.TestCase):
         """Test the to_csv method when resource has Unicode chars."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/datastore_search?'
@@ -540,7 +540,7 @@ class ResourceTest(unittest.TestCase):
         """Test the to_csv method when resource has the BOM bug."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/datastore_search?'
@@ -570,7 +570,7 @@ class ResourceTest(unittest.TestCase):
         """Test the iterator arg of the to_csv method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/datastore_search?'
@@ -602,7 +602,7 @@ class ResourceTest(unittest.TestCase):
         """Test the length of the records method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/datastore_search?'
@@ -624,7 +624,7 @@ class ResourceTest(unittest.TestCase):
         """Test the iterator arg of the to_csv method."""
 
         mock_requests.post(
-            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token',
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
             json={'access_token': 'foobar'})
         mock_requests.get(
             'https://api.emploi-store.fr/partenaire/infotravail/v1/datastore_search?'
