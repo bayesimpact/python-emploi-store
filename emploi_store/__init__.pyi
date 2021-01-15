@@ -83,8 +83,8 @@ class Client(object):
             latitude: typing.Optional[float] = None,
             longitude: typing.Optional[float] = None,
             distance: float = 10,
-            rome_codes: typing.Optional[typing.List[str]] = None,
-            naf_codes: typing.Optional[typing.List[str]] = None,
+            rome_codes: typing.Union[None, str, typing.List[str]] = None,
+            naf_codes: typing.Union[None, typing.List[str]] = None,
             city_id: typing.Optional[str] = None,
             contract: typing.Optional[str] = None) -> typing.Iterator[typing.Dict[str, str]]:
         ...

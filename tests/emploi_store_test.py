@@ -152,6 +152,23 @@ class ClientTestCase(unittest.TestCase):
         with self.assertRaises(emploi_store.requests.exceptions.HTTPError):
             list(companies)
 
+    def test_get_lbb_companies_one_rome_code_only(self, mock_requests):
+        """Test the get_lbb_companies method using a single rome code."""
+
+        mock_requests.post(
+            'https://entreprise.pole-emploi.fr/connexion/oauth2/access_token?realm=%2Fpartenaire',
+            json={'access_token': 'foobar'})
+        mock_requests.get(
+            'https://api.emploi-store.fr/partenaire/labonneboite/v1/company/?'
+            'distance=10&latitude=45&longitude=2.1&rome_codes=A1204&naf_codes=4711C',
+            headers={'Authorization': 'Bearer foobar'},
+            json={'companies': [{'one': 1}, {'two': 2}]})
+
+        companies = self.client.get_lbb_companies(45, 2.1, rome_codes='A1204', naf_codes='4711C')
+        companies = list(companies)
+
+        self.assertEqual([{'one': 1}, {'two': 2}], companies)
+
     def test_get_employment_rate_rank_for_training(self, mock_requests):
         """Test the get_employment_rate_rank_for_training method."""
 
