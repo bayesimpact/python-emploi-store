@@ -86,8 +86,8 @@ class Client(object):
             })
         try:
             auth_request.raise_for_status()
-        except Exception as error:
-            raise ValueError('Autentication failed: {}'.format(error))
+        except requests.exceptions.HTTPError as error:
+            six.raise_from(ValueError('Autentication failed: {}'.format(error)), error)
 
         response = auth_request.json()
         token = response.get('access_token')
