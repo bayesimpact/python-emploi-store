@@ -175,9 +175,15 @@ class Client(object):
             params['latitude'] = latitude
             params['longitude'] = longitude
         if rome_codes:
-            params['rome_codes'] = ','.join(rome_codes)
+            if isinstance(rome_codes, six.string_types):
+                params['rome_codes'] = rome_codes
+            else:
+                params['rome_codes'] = ','.join(rome_codes)
         if naf_codes:
-            params['naf_codes'] = ','.join(naf_codes)
+            if isinstance(naf_codes, six.string_types):
+                params['naf_codes'] = naf_codes
+            else:
+                params['naf_codes'] = ','.join(naf_codes)
         if contract:
             params['contract'] = contract
         scope = 'api_labonneboitev1'
