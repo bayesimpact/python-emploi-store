@@ -9,7 +9,7 @@ jobs:
       - checkout
       - run:
           name: Install requirements for test
-          command: pip install .[dev]
+          command: pip install .[dev] mypy
       - run:
           name: Actually run the tests
           command: nosetests --with-coverage
@@ -19,6 +19,9 @@ jobs:
       - run:
           name: Check style errors
           command: pylint --load-plugins pylint_quotes emploi_store tests
+      - run:
+          name: Check type stubs
+          command: stubtest emploi_store
   test-python2:
     docker:
       - image: python:2
