@@ -50,6 +50,9 @@ class Package(object):
 
 
 class Client(object):
+
+    api_url: str
+
     def __init__(
             self,
             client_id: typing.Optional[str] = None,
@@ -103,4 +106,7 @@ class Client(object):
         ...
 
     def list_online_events(self) -> typing.Dict[str, typing.Any]:
+        ...
+
+    def list_physical_events(self) -> typing.Dict[str, typing.Any]:
         ...
