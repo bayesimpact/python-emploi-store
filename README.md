@@ -1,3 +1,5 @@
+[![PyPI version](https://img.shields.io/pypi/v/python-emploi-store.svg)](https://pypi.python.org/pypi/python-emploi-store/)
+
 [Emploi Store Dev](https://www.emploi-store-dev.fr/) is a platform setup by
 Pôle Emploi, the French unemployment agency, to share their public data.
 
@@ -79,8 +81,4 @@ To release a new version of the library:
 * Make sure the [Changelog](./CHANGELOG.md) file is up to date.
 * Update the version number in [setup.py](./setup.py).
 * Tag the code with git.
-* Build and upload the package to [PyPi](https://pypi.org/project/python-emploi-store/):
-
-```sh
-python setup.py sdist upload
-```
+* CircleCI will take care of the deployment to [PyPi](https://pypi.org/project/python-emploi-store/)

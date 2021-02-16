@@ -39,6 +39,26 @@ jobs:
       - run:
           name: Check style errors
           command: pylint --load-plugins pylint_quotes emploi_store tests
+  deploy:
+    docker:
+      - image: python:3
+    steps:
+      - checkout
+      - run:
+          name: Check that the tag version matches the lib version
+          command: test "$CIRCLE_TAG" == "$(python -c "import setup; print(setup.__version__)")"
+      - run:
+          name: Build artifacts
+          command: python setup.py sdist bdist_wheel
+      - run:
+          name: Prepare PyPi credentials
+          command: |
+            echo "[pypi]" > ~/.pypirc
+            echo "  username = __token__" >> ~/.pypirc
+            echo "  password = $PYPI_TOKEN" >> ~/.pypirc
+      - run:
+          name: Deploy to PyPi
+          command: twine upload dist/*
 
 workflows:
   version: 2
@@ -46,3 +66,14 @@ workflows:
     jobs:
       - "test-python2"
       - "test-python3"
+      - deploy:
+          filters:
+            tags:
+              only: /\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
+          requires:
+            - test-python3
+            - test-python2
+          context:
+            - PyPi
