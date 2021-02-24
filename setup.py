@@ -3,7 +3,7 @@
 
 import setuptools
 
-__version__ = '0.9.1'
+__version__ = '0.10.10'
 
 if __name__ == '__main__':
     setuptools.setup(

@@ -1,5 +1,10 @@
 # Change Log
 
+## v0.10.0 [2021-02-24]
+
+* Accept single strings for rome_codes and naf_codes args.
+* Test typing stubs.
+
 ## v0.9.1 [2020-03-03]
 
 * Ship the type stubs with the PyPi package.
