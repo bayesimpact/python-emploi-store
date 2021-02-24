@@ -64,8 +64,14 @@ workflows:
   version: 2
   build:
     jobs:
-      - "test-python2"
-      - "test-python3"
+      - "test-python2":
+          filters:
+            tags:
+              only: /.*/
+      - "test-python3":
+          filters:
+            tags:
+              only: /.*/
       - deploy:
           filters:
             tags:
