@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.10.1 [2021-02-24]
+
+Not a real release, only update the CI config to deploy automatically.
+
 ## v0.10.0 [2021-02-24]
 
 * Accept single strings for rome_codes and naf_codes args.
