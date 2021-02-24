@@ -1,6 +1,6 @@
 # Change Log
 
-## v0.10.1 [2021-02-24]
+## v0.10.2 [2021-02-24]
 
 Not a real release, only update the CI config to deploy automatically.
 

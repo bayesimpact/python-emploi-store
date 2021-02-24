@@ -48,6 +48,9 @@ jobs:
           name: Check that the tag version matches the lib version
           command: test "$CIRCLE_TAG" == "$(python -c "import setup; print(setup.__version__)")"
       - run:
+          name: Install requirements for deployment
+          command: pip install twine
+      - run:
           name: Build artifacts
           command: python setup.py sdist bdist_wheel
       - run:
